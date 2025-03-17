@@ -11,8 +11,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
 
         .container {
@@ -21,7 +22,8 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
+            box-sizing: border-box;
         }
 
         h2 {
@@ -37,11 +39,12 @@
 
         input, textarea {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+            box-sizing: border-box;
         }
 
         textarea {
@@ -53,16 +56,33 @@
             width: 100%;
             background-color: #28a745;
             color: white;
-            padding: 10px;
+            padding: 12px;
             margin-top: 15px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            transition: background 0.3s;
         }
 
         button:hover {
             background-color: #218838;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            input, textarea {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
     </style>
     <script>
@@ -78,12 +98,10 @@
                 mensaje: document.getElementById("mensaje").value
             };
 
-            fetch("https://script.google.com/macros/s/AKfycbxd6rZRSXFnj275V4BO6O3f9skLCCkM7UUObYafazmhuOUe9dnlxCMMQGIYNXbJPzaO/exec", { // Reemplázalo con la URL de tu script
+            fetch("https://script.google.com/macros/s/AKfycbxd6rZRSXFnj275V4BO6O3f9skLCCkM7UUObYafazmhuOUe9dnlxCMMQGIYNXbJPzaO/exec", {
                 method: "POST",
                 mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             }).then(() => {
                 alert("Datos enviados con éxito.");
@@ -96,28 +114,28 @@
     <div class="container">
         <h2>Enviar datos a Google Sheets</h2>
         <form id="formulario" onsubmit="event.preventDefault(); enviarDatos();">
-            <label>Código:</label>
+            <label for="codigo">Código:</label>
             <input type="text" id="codigo" required>
             
-            <label>Descripción:</label>
+            <label for="descripcion">Descripción:</label>
             <input type="text" id="descripcion" required>
 
-            <label>Stock:</label>
+            <label for="stock">Stock:</label>
             <input type="number" id="stock" required>
 
-            <label>Box:</label>
+            <label for="box">Box:</label>
             <input type="text" id="box" required>
 
-            <label>Rack:</label>
+            <label for="rack">Rack:</label>
             <input type="text" id="rack" required>
 
-            <label>Nombre:</label>
+            <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" required>
             
-            <label>Email:</label>
+            <label for="email">Email:</label>
             <input type="email" id="email" required>
             
-            <label>Mensaje:</label>
+            <label for="mensaje">Mensaje:</label>
             <textarea id="mensaje" required></textarea>
             
             <button type="submit">Enviar</button>
