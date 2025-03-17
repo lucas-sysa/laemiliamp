@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario a Google Sheets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+    <script>
+        function enviarDatos() {
+            let formData = {
+                codigo: document.getElementById("codigo").value,
+                descripcion: document.getElementById("descripcion").value,
+                stock: document.getElementById("stock").value,
+                box: document.getElementById("box").value,
+                rack: document.getElementById("rack").value,
+                nombre: document.getElementById("nombre").value,
+                email: document.getElementById("email").value,
+                mensaje: document.getElementById("mensaje").value
+            };
+
+            fetch("TU_NUEVA_URL_DEL_SCRIPT", { // Reemplázalo con la URL de tu script
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            }).then(() => {
+                alert("Datos enviados con éxito.");
+                document.getElementById("formulario").reset();
+            }).catch(error => console.log(error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Enviar datos a Google Sheets</h2>
+        <form id="formulario" onsubmit="event.preventDefault(); enviarDatos();">
+            <label>Código:</label>
+            <input type="text" id="codigo" required>
+            
+            <label>Descripción:</label>
+            <input type="text" id="descripcion" required>
+
+            <label>Stock:</label>
+            <input type="number" id="stock" required>
+
+            <label>Box:</label>
+            <input type="text" id="box" required>
+
+            <label>Rack:</label>
+            <input type="text" id="rack" required>
+
+            <label>Nombre:</label>
+            <input type="text" id="nombre" required>
+            
+            <label>Email:</label>
+            <input type="email" id="email" required>
+            
+            <label>Mensaje:</label>
+            <textarea id="mensaje" required></textarea>
+            
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>
