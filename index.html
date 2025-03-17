@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario a Google Sheets</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -12,57 +18,75 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            width: 100vw;
         }
 
         .container {
             background: white;
-            padding: 20px;
+            padding: 2vw; /* Ajuste dinámico */
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
+            width: 90%;
+            max-width: 450px; /* Máximo ancho */
+            text-align: center;
         }
 
         h2 {
-            text-align: center;
+            font-size: 2vw;
             color: #333;
         }
 
         label {
             font-weight: bold;
             display: block;
-            margin-top: 10px;
+            margin-top: 1vw;
+            font-size: 1.2vw;
         }
 
         input, textarea {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
+            padding: 1vw;
+            margin-top: 0.5vw;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 1vw;
         }
 
         textarea {
             resize: none;
-            height: 80px;
+            height: 8vh;
         }
 
         button {
             width: 100%;
             background-color: #28a745;
             color: white;
-            padding: 10px;
-            margin-top: 15px;
+            padding: 1vw;
+            margin-top: 2vw;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 1.2vw;
             cursor: pointer;
         }
 
         button:hover {
             background-color: #218838;
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 5vw;
+            }
+
+            label, input, textarea, button {
+                font-size: 4vw;
+            }
+
+            .container {
+                padding: 4vw;
+                max-width: 95%;
+            }
         }
     </style>
     <script>
@@ -95,7 +119,7 @@
 <body>
     <div class="container">
         <h2>Enviar datos a Google Sheets</h2>
-        <form id="formulario" onsubmit="event.preventDefault(); enviarDatos();">
+        <form id="formulario">
             <label>Código:</label>
             <input type="text" id="codigo" required>
             
