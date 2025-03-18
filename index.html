@@ -86,15 +86,28 @@
         }
     </style>
     <script>
+        function actualizarStock() {
+            let stockActual = parseInt(document.getElementById("stock").value) || 0;
+            let entrada = parseInt(document.getElementById("entrada_stock").value) || 0;
+            let salida = parseInt(document.getElementById("salida_stock").value) || 0;
+
+            let nuevoStock = stockActual + entrada - salida;
+            if (nuevoStock < 0) {
+                alert("El stock no puede ser negativo.");
+                return;
+            }
+            document.getElementById("stock").value = nuevoStock;
+        }
+
         function enviarDatos() {
             let formData = {
                 codigo: document.getElementById("codigo").value,
                 descripcion: document.getElementById("descripcion").value,
                 stock: document.getElementById("stock").value,
+                entrada_stock: document.getElementById("entrada_stock").value,
+                salida_stock: document.getElementById("salida_stock").value,
                 box: document.getElementById("box").value,
                 rack: document.getElementById("rack").value,
-                nombre: document.getElementById("nombre").value,
-                email: document.getElementById("email").value,
                 mensaje: document.getElementById("mensaje").value
             };
 
@@ -121,7 +134,13 @@
             <input type="text" id="descripcion" required>
 
             <label for="stock">Stock:</label>
-            <input type="number" id="stock" required>
+            <input type="number" id="stock" required readonly>
+
+            <label for="entrada_stock">Entrada de Stock:</label>
+            <input type="number" id="entrada_stock" oninput="actualizarStock()">
+
+            <label for="salida_stock">Salida de Stock:</label>
+            <input type="number" id="salida_stock" oninput="actualizarStock()">
 
             <label for="box">Box:</label>
             <input type="text" id="box" required>
@@ -129,12 +148,6 @@
             <label for="rack">Rack:</label>
             <input type="text" id="rack" required>
 
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            
             <label for="mensaje">Mensaje:</label>
             <textarea id="mensaje" required></textarea>
             
