@@ -100,18 +100,6 @@
       font-style: italic;
       color: #888;
     }
-    @media print {
-      .menu-bar, input, .search-container {
-        display: none;
-      }
-      body {
-        padding: 0;
-      }
-      .container {
-        box-shadow: none;
-        margin: 0;
-      }
-    }
   </style>
 </head>
 <body>
@@ -247,10 +235,34 @@
     }
 
     function imprimirTabla() {
-      const elementosOcultar = document.querySelectorAll('.menu-bar, input, .search-container');
-      elementosOcultar.forEach(el => el.style.display = 'none');
-      window.print();
-      elementosOcultar.forEach(el => el.style.display = '');
+      const tabla = document.getElementById('resultTable').outerHTML;
+      const estilo = `
+        <style>
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 2px 4px;
+            text-align: center;
+          }
+          tr {
+            page-break-inside: avoid;
+          }
+        </style>
+      `;
+      const ventanaImpresion = window.open('', '', 'width=900,height=700');
+      ventanaImpresion.document.write('<html><head><title>Imprimir Stock</title>');
+      ventanaImpresion.document.write(estilo);
+      ventanaImpresion.document.write('</head><body>');
+      ventanaImpresion.document.write(tabla);
+      ventanaImpresion.document.write('</body></html>');
+      ventanaImpresion.document.close();
+      ventanaImpresion.focus();
+      ventanaImpresion.print();
+      ventanaImpresion.close();
     }
   </script>
 </body>
