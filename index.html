@@ -53,18 +53,16 @@
     </style>
 </head>
 <body>
-
     <div class="form-container">
         <h2>Gestión de Stock</h2>
-
         <form id="form">
-            <input placeholder="Escanear tarjeta del operador" id="usuario" required autofocus readonly>
-            <input placeholder="Código" id="codigo" required readonly>
+            <input placeholder="Escanear tarjeta del operador" id="usuario" required autofocus>
+            <input placeholder="Código" id="codigo" required>
             <input placeholder="Descripción" id="descripcion" required readonly>
-            <input type="number" placeholder="Entrada de stock" id="entrada" readonly>
-            <input type="number" placeholder="Salida de stock" id="salida" readonly>
-            <input placeholder="Rack" id="rack" required readonly>
-            <input placeholder="Box" id="box" required readonly>
+            <input type="number" placeholder="Entrada de stock" id="entrada">
+            <input type="number" placeholder="Salida de stock" id="salida">
+            <input placeholder="Rack" id="rack" required>
+            <input placeholder="Box" id="box" required>
             <button type="submit">Enviar</button>
         </form>
     </div>
@@ -83,20 +81,7 @@
             entradaInput.disabled = salidaInput.value !== "";
         });
 
-        /* ===================================
-           🔐 BLOQUEAR ESCRITURA MANUAL
-           =================================== */
-        document.querySelectorAll("input").forEach(input => {
-            input.addEventListener("keydown", e => {
-                if (e.key === "Tab" || e.key === "Enter") return;
-                if (e.key.length === 1) e.preventDefault();
-            });
-        });
-
-        /* ======================
-           📦 BASE DE PRODUCTOS
-           ====================== */
-    const productos = {
+const productos = {
 "MPR36":"PORTA TABLERO NUEVO (A) HOMOPOLÍMERO",
 "MPR36-":"PORTA TABLERO PP",
 "MPR46":"CUBRECADENAS (A)",
@@ -411,56 +396,19 @@
 "299066570000":"REGULADOR DE VOLTAJE",
     };
 
-        document.getElementById('codigo').addEventListener('input', function () {
-            const codigoIngresado = this.value.trim().toUpperCase();
-            const descripcion = productos[codigoIngresado];
-            document.getElementById('descripcion').value = descripcion || '';
+document.getElementById('codigo').addEventListener('input', function () {
+    const codigoIngresado = this.value.trim().toUpperCase();
+    const descripcion = productos[codigoIngresado];
+    document.getElementById('descripcion').value = descripcion || '';
+    
+    if (!descripcion && codigoIngresado.length > 3) {
+        document.getElementById('descripcion').placeholder = 'Código no reconocido';
+    } else {
+        document.getElementById('descripcion').placeholder = 'Descripción';
+    }
+});
 
-            if (!descripcion && codigoIngresado.length > 3) {
-                document.getElementById('descripcion').placeholder = 'Código no reconocido';
-            } else {
-                document.getElementById('descripcion').placeholder = 'Descripción';
-            }
-        });
 
-        /* ===========================================================
-           🔄 AVANCE AUTOMÁTICO ENTRE CAMPOS AL TERMINAR EL ESCANEO
-           =========================================================== */
-        const inputsOrden = [
-            "usuario",
-            "codigo",
-            "descripcion",
-            "entrada",
-            "salida",
-            "rack",
-            "box"
-        ];
-
-        let timers = {};
-
-        function saltarSiguiente(idActual) {
-            const indice = inputsOrden.indexOf(idActual);
-            if (indice >= 0 && indice < inputsOrden.length - 1) {
-                const siguiente = document.getElementById(inputsOrden[indice + 1]);
-                siguiente.removeAttribute("readonly");
-                siguiente.focus();
-                setTimeout(() => siguiente.setAttribute("readonly", true), 150);
-            }
-        }
-
-        inputsOrden.forEach(id => {
-            const input = document.getElementById(id);
-            input.addEventListener("input", () => {
-                clearTimeout(timers[id]);
-                timers[id] = setTimeout(() => {
-                    saltarSiguiente(id);
-                }, 80); // 80ms → scanner rápido, humano no
-            });
-        });
-
-        /* ===================
-           📤 ENVÍO DE DATOS
-           =================== */
         document.getElementById('form').addEventListener('submit', e => {
             e.preventDefault();
 
@@ -475,18 +423,19 @@
             let salidaNegativa = "0";
             if (salidaValue) {
                 salidaNegativa = `-${Math.abs(parseInt(salidaValue))}`;
-                if (!confirm(`Vas a registrar una salida de ${salidaNegativa} unidades. ¿Confirmás?`)) return;
+                const confirmarSalida = confirm(`Vas a registrar una salida de ${salidaNegativa} unidades. ¿Confirmás?`);
+                if (!confirmarSalida) return;
             }
 
-            const data = {
-                usuario: usuario.value,
-                codigo: codigo.value,
-                descripcion: descripcion.value,
-                entrada: entradaValue || "0",
-                salida: salidaNegativa,
-                rack: rack.value,
-                box: box.value
-            };
+const data = {
+    usuario: document.getElementById('usuario').value, 
+    codigo: document.getElementById('codigo').value,
+    descripcion: document.getElementById('descripcion').value,
+    entrada: entradaValue || "0",
+    salida: salidaNegativa,
+    rack: document.getElementById('rack').value,
+    box: document.getElementById('box').value
+};
 
             fetch(scriptURL, {
                 method: 'POST',
@@ -496,13 +445,12 @@
             })
             .then(() => {
                 alert('Datos enviados correctamente');
-                form.reset();
+                document.getElementById('form').reset();
                 entradaInput.disabled = false;
                 salidaInput.disabled = false;
             })
             .catch(error => alert('Error al enviar: ' + error.message));
         });
     </script>
-
 </body>
 </html>
