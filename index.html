@@ -56,13 +56,13 @@
     <div class="form-container">
         <h2>Gestión de Stock</h2>
         <form id="form">
-            <input placeholder="Escanear tarjeta del operador" id="usuario" required autofocus readonly>
-            <input placeholder="Código" id="codigo" required readonly>
+            <input placeholder="Escanear tarjeta del operador" id="usuario" required autofocus>
+            <input placeholder="Código" id="codigo" required>
             <input placeholder="Descripción" id="descripcion" required readonly>
-            <input type="number" placeholder="Entrada de stock" id="entrada" readonly>
-            <input type="number" placeholder="Salida de stock" id="salida" readonly>
-            <input placeholder="Rack" id="rack" required readonly>
-            <input placeholder="Box" id="box" required readonly>
+            <input type="number" placeholder="Entrada de stock" id="entrada">
+            <input type="number" placeholder="Salida de stock" id="salida">
+            <input placeholder="Rack" id="rack" required>
+            <input placeholder="Box" id="box" required>
             <button type="submit">Enviar</button>
         </form>
     </div>
@@ -81,30 +81,7 @@
             entradaInput.disabled = salidaInput.value !== "";
         });
 
-        // 🔒 Evitar escritura manual en todos los inputs
-        const inputs = document.querySelectorAll("input");
-
-        inputs.forEach(input => {
-            input.addEventListener("keydown", e => {
-                // Bloquea escritura manual
-                if (!e.key.startsWith("F") && e.key !== "Tab" && e.key !== "Enter") {
-                    e.preventDefault();
-                }
-            });
-        });
-
-        // Solo el escáner puede escribir
-        function habilitarPorEscaneo(input) {
-            input.readOnly = false;
-            setTimeout(() => input.readOnly = true, 200); // vuelve a bloquearse
-        }
-
-        inputs.forEach(input => {
-            input.addEventListener("paste", () => habilitarPorEscaneo(input));
-            input.addEventListener("input", () => habilitarPorEscaneo(input));
-        });
-
-    const productos = {
+const productos = {
 "MPR36":"PORTA TABLERO NUEVO (A) HOMOPOLÍMERO",
 "MPR36-":"PORTA TABLERO PP",
 "MPR46":"CUBRECADENAS (A)",
@@ -418,19 +395,18 @@
 "299053090030":"CDI",
 "299066570000":"REGULADOR DE VOLTAJE",
     };
+document.getElementById('codigo').addEventListener('input', function () {
+    const codigoIngresado = this.value.trim().toUpperCase();
+    const descripcion = productos[codigoIngresado];
+    document.getElementById('descripcion').value = descripcion || '';
+    
+    if (!descripcion && codigoIngresado.length > 3) {
+        document.getElementById('descripcion').placeholder = 'Código no reconocido';
+    } else {
+        document.getElementById('descripcion').placeholder = 'Descripción';
+    }
+});
 
-
-        document.getElementById('codigo').addEventListener('input', function () {
-            const codigoIngresado = this.value.trim().toUpperCase();
-            const descripcion = productos[codigoIngresado];
-            document.getElementById('descripcion').value = descripcion || '';
-            
-            if (!descripcion && codigoIngresado.length > 3) {
-                document.getElementById('descripcion').placeholder = 'Código no reconocido';
-            } else {
-                document.getElementById('descripcion').placeholder = 'Descripción';
-            }
-        });
 
         document.getElementById('form').addEventListener('submit', e => {
             e.preventDefault();
@@ -450,15 +426,15 @@
                 if (!confirmarSalida) return;
             }
 
-            const data = {
-                usuario: document.getElementById('usuario').value, 
-                codigo: document.getElementById('codigo').value,
-                descripcion: document.getElementById('descripcion').value,
-                entrada: entradaValue || "0",
-                salida: salidaNegativa,
-                rack: document.getElementById('rack').value,
-                box: document.getElementById('box').value
-            };
+const data = {
+    usuario: document.getElementById('usuario').value, 
+    codigo: document.getElementById('codigo').value,
+    descripcion: document.getElementById('descripcion').value,
+    entrada: entradaValue || "0",
+    salida: salidaNegativa,
+    rack: document.getElementById('rack').value,
+    box: document.getElementById('box').value
+};
 
             fetch(scriptURL, {
                 method: 'POST',
