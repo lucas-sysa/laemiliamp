@@ -65,7 +65,6 @@
             <input type="number" placeholder="Salida de stock" id="salida" readonly>
             <input placeholder="Rack" id="rack" required readonly>
             <input placeholder="Box" id="box" required readonly>
-
             <button type="submit">Enviar</button>
         </form>
     </div>
@@ -84,31 +83,13 @@
             entradaInput.disabled = salidaInput.value !== "";
         });
 
-        /* ============================================================
-           🔒 BLOQUEO TOTAL DE ESCRITURA MANUAL — SOLO PERMITE SCANNER
-           ============================================================ */
-        const inputs = document.querySelectorAll("input");
-
-        inputs.forEach(input => {
-
-            // Bloquea teclas del teclado humano
+        /* ===================================
+           🔐 BLOQUEAR ESCRITURA MANUAL
+           =================================== */
+        document.querySelectorAll("input").forEach(input => {
             input.addEventListener("keydown", e => {
-                if (e.key === "Tab" || e.key === "Enter") return; 
+                if (e.key === "Tab" || e.key === "Enter") return;
                 if (e.key.length === 1) e.preventDefault();
-            });
-
-            // Detección de escáner por velocidad
-            let ultimaEntrada = Date.now();
-
-            input.addEventListener("beforeinput", e => {
-                const ahora = Date.now();
-                const intervalo = ahora - ultimaEntrada;
-                ultimaEntrada = ahora;
-
-                // Humano → intervalo > 30 ms
-                if (intervalo > 30) {
-                    e.preventDefault();
-                }
             });
         });
 
@@ -442,6 +423,41 @@
             }
         });
 
+        /* ===========================================================
+           🔄 AVANCE AUTOMÁTICO ENTRE CAMPOS AL TERMINAR EL ESCANEO
+           =========================================================== */
+        const inputsOrden = [
+            "usuario",
+            "codigo",
+            "descripcion",
+            "entrada",
+            "salida",
+            "rack",
+            "box"
+        ];
+
+        let timers = {};
+
+        function saltarSiguiente(idActual) {
+            const indice = inputsOrden.indexOf(idActual);
+            if (indice >= 0 && indice < inputsOrden.length - 1) {
+                const siguiente = document.getElementById(inputsOrden[indice + 1]);
+                siguiente.removeAttribute("readonly");
+                siguiente.focus();
+                setTimeout(() => siguiente.setAttribute("readonly", true), 150);
+            }
+        }
+
+        inputsOrden.forEach(id => {
+            const input = document.getElementById(id);
+            input.addEventListener("input", () => {
+                clearTimeout(timers[id]);
+                timers[id] = setTimeout(() => {
+                    saltarSiguiente(id);
+                }, 80); // 80ms → scanner rápido, humano no
+            });
+        });
+
         /* ===================
            📤 ENVÍO DE DATOS
            =================== */
@@ -459,18 +475,17 @@
             let salidaNegativa = "0";
             if (salidaValue) {
                 salidaNegativa = `-${Math.abs(parseInt(salidaValue))}`;
-                const confirmarSalida = confirm(`Vas a registrar una salida de ${salidaNegativa} unidades. ¿Confirmás?`);
-                if (!confirmarSalida) return;
+                if (!confirm(`Vas a registrar una salida de ${salidaNegativa} unidades. ¿Confirmás?`)) return;
             }
 
             const data = {
-                usuario: document.getElementById('usuario').value,
-                codigo: document.getElementById('codigo').value,
-                descripcion: document.getElementById('descripcion').value,
+                usuario: usuario.value,
+                codigo: codigo.value,
+                descripcion: descripcion.value,
                 entrada: entradaValue || "0",
                 salida: salidaNegativa,
-                rack: document.getElementById('rack').value,
-                box: document.getElementById('box').value
+                rack: rack.value,
+                box: box.value
             };
 
             fetch(scriptURL, {
@@ -481,7 +496,7 @@
             })
             .then(() => {
                 alert('Datos enviados correctamente');
-                document.getElementById('form').reset();
+                form.reset();
                 entradaInput.disabled = false;
                 salidaInput.disabled = false;
             })
